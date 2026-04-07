@@ -1,0 +1,18 @@
+#!/bin/bash
+#SBATCH --job-name=flye_sponge        # Job name
+#SBATCH --output=flye_sponge.txt           # Standard output file
+#SBATCH --error=sponge_error.txt             # Standard error file
+#SBATCH --account=biology          # Your academic department 
+#SBATCH --partition=debug             # Partition or queue name
+#SBATCH --nodes=1                     # Number of nodes
+#SBATCH --ntasks-per-node=1           # Number of tasks per node
+#SBATCH --cpus-per-task=6             # Number of CPU cores per task
+#SBATCH --time=7-00:00:00                # Maximum runtime (D-HH:MM:SS)
+#SBATCH --mem=8GB                     # Memory requested
+#SBATCH --mail-type=END,FAIL               # Send email at job completion
+#SBATCH --mail-user=dieterleks@appstate.edu # Email address for notifications
+
+
+module load user/all/mamba_python_3_8
+
+flye --nano-raw ./Sponge_all_Long.fastq.gz --genome-size 326m --threads 6 --out-dir ./Output_flye_sponge
