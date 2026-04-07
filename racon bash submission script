@@ -1,0 +1,37 @@
+#!/bin/bash
+#SBATCH --job-name=racon_sponge        # Job name
+#SBATCH --output=racon_sponge.txt           # Standard output file
+#SBATCH --error=racon_error.txt             # Standard error file
+#SBATCH --account=biology          # Your academic department 
+#SBATCH --partition=debug             # Partition or queue name
+#SBATCH --nodes=1                     # Number of nodes
+#SBATCH --ntasks-per-node=1           # Number of tasks per node
+#SBATCH --cpus-per-task=6             # Number of CPU cores per task
+#SBATCH --time=7-00:00:00                # Maximum runtime (D-HH:MM:SS)
+#SBATCH --mem=10GB                     # Memory requested
+#SBATCH --mail-type=END,FAIL               # Send email at job completion
+#SBATCH --mail-user=dieterleks@appstate.edu # Email address for notifications
+
+
+module load user/all/biomamba
+
+threads="5"
+
+for i in {1..3}; do
+	echo "starting polishing round $i"
+	minimap2 -x map-ont -t 5 assembly_racon.fa Sponge_all_Long.fastq.gz > temp_reads_to_draft.paf
+	racon -t $threads -m 8 -x -6 -g -8 -w 500 Sponge_all_Long.fastq.gz temp_reads_to_draft.paf assembly_racon.fa > temp_draft_new.fa
+	mv temp_draft_new.fa assembly_racon.fa
+done
+
+mv assembly_racon.fa Final_racon.fa
+rm temp_reads_to_draft.paf 
+
+echo "checking assembly quality"
+module load user/all/mamba_python_3_6
+
+busco --version
+
+threads="5"
+
+busco --in Final_racon.fa --mode genome --lineage_dataset metazoa_odb10 --cpu $threads --out busco_sponge/
