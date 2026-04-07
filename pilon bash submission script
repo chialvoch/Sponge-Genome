@@ -1,0 +1,27 @@
+#!/bin/bash
+#SBATCH --job-name=pilon_sponge        # Job name
+#SBATCH --output=pilon_sponge.txt           # Standard output file
+#SBATCH --error=pilon_error.txt             # Standard error file
+#SBATCH --account=biology          # Your academic department 
+#SBATCH --partition=debug             # Partition or queue name
+#SBATCH --nodes=1                     # Number of nodes
+#SBATCH --ntasks-per-node=1           # Number of tasks per node
+#SBATCH --cpus-per-task=5             # Number of CPU cores per task
+#SBATCH --time=7-00:00:00                # Maximum runtime (D-HH:MM:SS)
+#SBATCH --mem=50GB                     # Memory requested
+#SBATCH --mail-type=END,FAIL               # Send email at job completion
+#SBATCH --mail-user= dieterleks@appstate.edu # Email address for notifications
+
+
+module load user/all/biomamba
+
+threads="5"
+
+#cp Sponge_Final_racon.fasta temp_draft.fa
+
+minimap2 -ax sr -t $threads temp_draft.fa sponge_r1.fastq.gz sponge_r2.fastq.gz | samtools sort -o reads_to_draft.bam -@ $threads 
+samtools index reads_to_draft.bam 
+
+pilon -Xmx50G --genome temp_draft.fa --frags reads_to_draft.bam --outdir pilon --fix "snps,indels" 
+
+cat ./pilon/pilon.fasta | awk '/^>/{print ">contig_" ++i; next}{print}' > sponge_pilon.fasta
