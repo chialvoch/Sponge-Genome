@@ -13,4 +13,6 @@ The workflows in this repository utilizes standard bioinformatics tools
 2. Assembly polishing with long reads with __Racon__ (x3)
 3. Quality check of assembly with __BUSCO__
 4. Polishing the assembly with the short reads with __Pilon__
+5. Decontamination of __Pilon__ results
+   - Identifying genes that contain __BUSCO__ hits
 
