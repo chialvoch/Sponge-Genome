@@ -1,0 +1,5 @@
+module load user/all/azeez
+
+export BLASTDB="/hpc/modules/resources/ncbi/blast"
+
+blastn -task megablast -query sponge_nobusco_cp.fasta -db nt -outfmt '6 qseqid sskingdoms sblastnames sscinames scomnames stitle evalue bitscore' -max_target_seqs 1 -max_hsps 1 -num_threads 6 -evalue 1e-25 -out sponge_nobusco_cp.fasta.out
