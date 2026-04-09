@@ -1,0 +1,21 @@
+#!/bin/bash
+
+
+module load user/all/mamba_python_3_6
+
+busco --version
+
+threads="16"
+
+busco --in sponge_pilon.fasta --mode genome --lineage_dataset metazoa_odb10 --cpu $threads --out busco_sponge/
+
+# get list of contig names where BUSCOs are present
+cat busco_sponge/run_metazoa_odb10/full_table.tsv | grep -v "^#" | grep -v "Missing" | awk '{print $3}' | sort | uniq > Sponge_keep_contigs.txt
+
+# get contigs without BUSCOs (Complement)
+cat sponge_pilon.fasta | grep ">" | tr -d ">" | grep -Fxvf Sponge_keep_contigs.txt - > Sponge_nobusco_contigs.txt
+
+module load user/all/biomamba
+
+# get fasta excluding contigs with BUSCOs using seqtk
+seqtk subseq -l80 sponge_pilon.fasta Sponge_nobusco_contigs.txt > Sponge.Assembly.nobusco.fasta && rm Sponge_nobusco_contigs.txt
