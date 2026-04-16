@@ -16,4 +16,5 @@ The workflows in this repository utilizes standard bioinformatics tools
 5. Decontamination of __Pilon__ results
    - Identifying contigs that contain __BUSCO__ genes
    - __BLASTn__ search on contigs that don't contain __BUSCO__ genes
+   - Decontamination using __BLASTn__ results
 
