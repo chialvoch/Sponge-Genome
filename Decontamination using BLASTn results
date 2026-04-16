@@ -1,0 +1,11 @@
+#!/bin/bash
+
+
+
+module load user/all/mamba_python_3_8
+
+cat sponge_pilon.fasta | grep ">" | tr -d ">" | grep -Fxvf All_contaminants.txt - > sponge_keep_contigs.txt
+
+seqtk subseq -l80 sponge_pilon.fasta sponge_keep_contigs.txt | awk '/^>/{print ">contig_" ++i; next}{print}' > Sponge.assembly.clean.fasta
+
+seqtk subseq -l80 sponge_pilon.fasta Bacteria_contaminants.txt | awk '/^>/{print ">contig_" ++i; next}{print}' > Sponge.bacteria.fasta
